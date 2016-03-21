@@ -40,11 +40,6 @@ namespace RemCtl
 
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void ServBox_TextChanged(object sender, EventArgs e)
         {
             ServIp = ServBox.Text;
