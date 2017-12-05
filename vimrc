@@ -1,6 +1,17 @@
 "splin's .vimrc
 "2017-12-02 
 let mapleader=';'
+
+vnoremap <Leader>y "+y
+nmap <Leader>p "+p
+nmap <Leader>q :q<CR>
+nmap <Leader>w :w<CR>
+nmap <Leader>WQ :wa<CR>:q<CR>
+nmap <Leader>Q :qa!<CR>
+nnoremap nw <C-W><C-W>
+
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
+
 set nocompatible
 set wildmenu
 
@@ -84,11 +95,17 @@ let g:tagbar_compact=1
 nnoremap <silent> <F7> :TagbarToggle<CR>
 
 
-let NERDChrismasTree=1
 let NERDTreeAutoCenter=1
 let NERDTreeHightCursorline=1
 let NERDTreeWinPos='right'
-let NERDTreeWinSize=31 
+let NERDTreeWinSize=32 
+let NERDTreeShowHidden=1
 let NERDTreeMinimalUI=1
+let NERDTreeAutoDeleteBuffer=1
 nnoremap <silent> <F8> :NERDTreeToggle<CR> 
 
+
+"map <C-Tab> :MBEbn<CR>
+"map <C-S-TAB> :MBEbp<CR>
+map <Leader>t :MBEFocus<CR>
+nnoremap <silent> <F6> :MBEToggle<CR>
