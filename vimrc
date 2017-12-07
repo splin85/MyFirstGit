@@ -1,7 +1,10 @@
 "splin's .vimrc
 "2017-12-02 
+
+
 let mapleader=';'
 
+" define quick keys
 vnoremap <Leader>y "+y
 nmap <Leader>p "+p
 nmap <Leader>q :q<CR>
@@ -11,6 +14,25 @@ nmap <Leader>Q :qa!<CR>
 nnoremap nw <C-W><C-W>
 
 autocmd BufWritePost $MYVIMRC source $MYVIMRC
+
+
+" add file notes .c and .h files
+autocmd BufNewFile *.[ch],*.cpp exec ":call SetTitleHead()"
+func! SetTitleHead()
+    call append(0,"/*")
+    call append(1," * Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc")
+    call append(2," *")
+    call append(3," * File: ".expand("%:t"))
+    call append(4," * This file is xxx(need to be modified)")
+    call append(5," *")
+    call append(6," *")
+    call append(7," * @Author splin")
+    call append(8," * @Date ".strftime("%Y-%m-%d"))
+    call append(9," *")
+    call append(10," */")
+endfunc
+map <F4> :call SetTitleHead()<CR>
+
 
 set nocompatible
 set wildmenu
