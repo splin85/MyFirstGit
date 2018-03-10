@@ -2,6 +2,7 @@
 "2017-12-02 
 
 
+
 let mapleader=';'
 
 " define quick keys
@@ -17,8 +18,8 @@ autocmd BufWritePost $MYVIMRC source $MYVIMRC
 
 
 " add file notes .c and .h files
-autocmd BufNewFile *.[ch],*.cpp exec ":call SetTitleHead()"
-func! SetTitleHead()
+autocmd BufNewFile *.[ch],*.cpp,*.sh exec ":call SetFileHead()"
+func! SetTitleHead_cpp()
     call append(0,"/*")
     call append(1," * Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc")
     call append(2," *")
@@ -31,8 +32,31 @@ func! SetTitleHead()
     call append(9," *")
     call append(10," */")
 endfunc
-map <F4> :call SetTitleHead()<CR>
 
+func! SetTitleHead_sh()
+    call append(0,"#!/bin/bash")
+    call append(1,"# Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc")
+    call append(2,"#")
+    call append(3,"# File: ".expand("%:t"))
+    call append(4,"# This is script which")
+    call append(5,"#")
+    call append(6,"#")
+    call append(7,"# @Author splin")
+    call append(8,"# @Date ".strftime("%Y-%m-%d"))
+    call append(9,"#")
+endfunc
+
+func! SetFileHead()
+    if &filetype == 'sh'
+        call SetTitleHead_sh()
+    else
+        call SetTitleHead_cpp()
+    endif
+endfunc
+
+map <F4> :call SetFileHead()<CR>
+
+set fileformat=unix
 
 set nocompatible
 set wildmenu
@@ -62,19 +86,21 @@ set cindent
 set smartindent
 
 syntax enable
+set t_Co=256
+"let g:solarized_termcolors=256  
+"set background=dark 
+colorscheme torte
 syntax on
 
 "set smarttab
 filetype indent on
 set shiftwidth=4 
-set tabstop=4 
-set expandtab
+set ts=4 expandtab
 
 set autowrite
 
 "set report=0
 
-set t_Co=256
 
 "filetype off
 filetype plugin on
@@ -106,13 +132,16 @@ Plugin 'gcmt/wildfire.vim'
 Plugin 'sjl/gundo.vim'
 "Plugin 'Lokaltog/vim-easymotion'
 Plugin 'suan/vim-instant-markdown'
+Plugin 'chriskempson/vim-tomorrow-theme'
 "Plugin 'lilydjwg/fcitx.vim'
+"Plugin 'xolox/vim-misc'
+"Plugin 'xolox/vim-easytags'
 call vundle#end()
 filetype plugin indent on
 
 
 let tagbar_left=1
-let tagbar_width=32
+let tagbar_width=40
 let g:tagbar_compact=1
 nnoremap <silent> <F7> :TagbarToggle<CR>
 
@@ -120,7 +149,7 @@ nnoremap <silent> <F7> :TagbarToggle<CR>
 let NERDTreeAutoCenter=1
 let NERDTreeHightCursorline=1
 let NERDTreeWinPos='right'
-let NERDTreeWinSize=32 
+let NERDTreeWinSize=40 
 let NERDTreeShowHidden=1
 let NERDTreeMinimalUI=1
 let NERDTreeAutoDeleteBuffer=1
