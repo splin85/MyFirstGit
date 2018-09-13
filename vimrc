@@ -13,6 +13,10 @@ nmap <Leader>w :w<CR>
 nmap <Leader>WQ :wa<CR>:q<CR>
 nmap <Leader>Q :qa!<CR>
 nnoremap nw <C-W><C-W>
+nnoremap lw <C-W>l
+nnoremap hw <C-W>h
+
+vnoremap / y/<c-r>"<cr>
 
 autocmd BufWritePost $MYVIMRC source $MYVIMRC
 
@@ -20,30 +24,27 @@ autocmd BufWritePost $MYVIMRC source $MYVIMRC
 " add file notes .c and .h files
 autocmd BufNewFile *.[ch],*.cpp,*.sh exec ":call SetFileHead()"
 func! SetTitleHead_cpp()
-    call append(0,"/*")
-    call append(1," * Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc")
+    call append(0,"/**")
+    call append(1," * Copyright (C) 2018 Bei Jing Fu Hua Yu Qi Info Tech, Inc")
     call append(2," *")
-    call append(3," * File: ".expand("%:t"))
+    call append(3," * file: ".expand("%:t"))
     call append(4," * This file is xxx(need to be modified)")
     call append(5," *")
-    call append(6," *")
-    call append(7," * @Author splin")
-    call append(8," * @Date ".strftime("%Y-%m-%d"))
-    call append(9," *")
-    call append(10," */")
+    call append(6," * @author splin")
+    call append(7," * @date ".strftime("%Y/%m/%d"))
+    call append(8," */")
 endfunc
 
 func! SetTitleHead_sh()
     call append(0,"#!/bin/bash")
-    call append(1,"# Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc")
+    call append(1,"# Copyright (C) 2018 Bei Jing Fu Hua Yu Qi Info Tech, Inc")
     call append(2,"#")
-    call append(3,"# File: ".expand("%:t"))
+    call append(3,"# file: ".expand("%:t"))
     call append(4,"# This is script which")
     call append(5,"#")
-    call append(6,"#")
-    call append(7,"# @Author splin")
-    call append(8,"# @Date ".strftime("%Y-%m-%d"))
-    call append(9,"#")
+    call append(6,"# @author splin")
+    call append(7,"# @date ".strftime("%Y/%m/%d"))
+    call append(8,"#")
 endfunc
 
 func! SetFileHead()
@@ -56,11 +57,17 @@ endfunc
 
 map <F4> :call SetFileHead()<CR>
 
+func! CallCompile()
+    exec 'w'
+    call make
+endfunc
+
+
 set fileformat=unix
 
 set nocompatible
 set wildmenu
-
+set vb t_vb=
 set number
 "set laststatus=2
 set ruler
@@ -131,7 +138,9 @@ Plugin 'fholgado/minibufexpl.vim'
 Plugin 'gcmt/wildfire.vim'
 Plugin 'sjl/gundo.vim'
 "Plugin 'Lokaltog/vim-easymotion'
-Plugin 'suan/vim-instant-markdown'
+"Plugin 'godlygeek/tabular'
+"Plugin 'plasticboy/vim-markdown'
+"Plugin 'suan/vim-instant-markdown'
 Plugin 'chriskempson/vim-tomorrow-theme'
 "Plugin 'lilydjwg/fcitx.vim'
 "Plugin 'xolox/vim-misc'
@@ -141,8 +150,10 @@ filetype plugin indent on
 
 
 let tagbar_left=1
-let tagbar_width=40
+let tagbar_width=50
 let g:tagbar_compact=1
+"let g:tagbar_autopreview=1
+let g:tagbar_sort=0
 nnoremap <silent> <F7> :TagbarToggle<CR>
 
 
