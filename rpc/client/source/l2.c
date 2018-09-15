@@ -1,10 +1,3 @@
-/**
- * Copyright (C) 2018 Bei Jing Fu Hua Yu Qi Info Tech, Inc
- *
- * @file
- * @author wang shun qiang
- * @date   9/11/2018
- */
 #include <fhos/errno.h>
 #include <fhos/utils.h>
 

@@ -1,10 +1,3 @@
-/**
- * Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc
- *
- * @file dot1x.c
- * @author Ou Fan
- * @date 2018-04-23
- */
 
 
 #include <sai/types.h>

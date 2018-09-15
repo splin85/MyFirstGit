@@ -1,10 +1,3 @@
-/**
- * Copyright (C) 2018 Bei Jing Fu Hua Yu Qi Info Tech, Inc.
- *
- * @file
- * @author Xie Peng
- * @date 05/31/18
- */
 
 #ifndef __RPC_CLIENT_VLAN_H__
 #define __RPC_CLIENT_VLAN_H__

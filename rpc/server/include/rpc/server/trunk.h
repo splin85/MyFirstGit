@@ -1,10 +1,3 @@
-/**
- * Copyright (C) 2018 Bei Jing Fu Hua Yu Qi Info Tech, Inc
- *
- * @file
- * @author long qiang
- * @date   4/17/2018
- */
 
 #ifndef __RPC_TRUNK_H__
 #define __RPC_TRUNK_H__

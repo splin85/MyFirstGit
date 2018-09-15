@@ -1,10 +1,3 @@
-/**
- * Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc
- *
- * @file ntp.c
- * @author Ou Fan
- * @date 2018-03-13
- */
 
  
 #include <string.h>
