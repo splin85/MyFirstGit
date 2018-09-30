@@ -1,0 +1,370 @@
+/*
+ * Copyright 2013-2014 Freescale Semiconductor, Inc.
+ *
+ * This file is dual-licensed: you can use it either under the terms
+ * of the GPL or the X11 license, at your option. Note that this dual
+ * licensing only applies to this file, and not this project as a
+ * whole.
+ *
+ *  a) This file is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU General Public License as
+ *     published by the Free Software Foundation; either version 2 of
+ *     the License, or (at your option) any later version.
+ *
+ *     This file is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public
+ *     License along with this file; if not, write to the Free
+ *     Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
+ *     MA 02110-1301 USA
+ *
+ * Or, alternatively,
+ *
+ *  b) Permission is hereby granted, free of charge, to any person
+ *     obtaining a copy of this software and associated documentation
+ *     files (the "Software"), to deal in the Software without
+ *     restriction, including without limitation the rights to use,
+ *     copy, modify, merge, publish, distribute, sublicense, and/or
+ *     sell copies of the Software, and to permit persons to whom the
+ *     Software is furnished to do so, subject to the following
+ *     conditions:
+ *
+ *     The above copyright notice and this permission notice shall be
+ *     included in all copies or substantial portions of the Software.
+ *
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *     OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/dts-v1/;
+#include "ls1021a.dtsi"
+
+/ {
+	model = "LS1021A TWR Board";
+
+	aliases {
+		enet2_rgmii_phy = &rgmii_phy1;
+		enet0_sgmii_phy = &sgmii_phy2;
+		enet1_sgmii_phy = &sgmii_phy0;
+	};
+
+	sys_mclk: clock-mclk {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <24576000>;
+	};
+
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		reg_3p3v: regulator@0 {
+			compatible = "regulator-fixed";
+			reg = <0>;
+			regulator-name = "3P3V";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-always-on;
+		};
+	};
+
+	sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,widgets =
+			"Microphone", "Microphone Jack",
+			"Headphone", "Headphone Jack",
+			"Speaker", "Speaker Ext",
+			"Line", "Line In Jack";
+		simple-audio-card,routing =
+			"MIC_IN", "Microphone Jack",
+			"Microphone Jack", "Mic Bias",
+			"LINE_IN", "Line In Jack",
+			"Headphone Jack", "HP_OUT",
+			"Speaker Ext", "LINE_OUT";
+
+		simple-audio-card,cpu {
+			sound-dai = <&sai1>;
+			frame-master;
+			bitclock-master;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&codec>;
+			frame-master;
+			bitclock-master;
+		};
+	};
+};
+
+&dspi1 {
+	bus-num = <0>;
+	status = "okay";
+
+	dspiflash: s25fl064k@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "spansion,s25fl064k";
+		spi-max-frequency = <16000000>;
+		spi-cpol;
+		spi-cpha;
+		reg = <0>;
+	};
+
+        spidev: spidev@2 {
+                compatible = "rohm,dh2228fv";
+                spi-max-frequency = <16000000>;
+                reg = <2>;
+        };
+};
+
+&qspi {
+	num-cs = <2>;
+	status = "disabled";
+
+	qflash0: n25q128a13@0 {
+		compatible = "n25q128a13", "jedec,spi-nor";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		spi-max-frequency = <20000000>;
+		reg = <0>;
+	};
+};
+
+&enet0 {
+	phy-handle = <&sgmii_phy2>;
+	phy-connection-type = "rgmii";
+	status = "okay";
+};
+
+&enet1 {
+        fixed-link = <1 1 1000 0 0>;
+	tbi-handle = <&tbi1>;
+	phy-connection-type = "sgmii";
+	status = "okay";
+};
+
+&enet2 {
+	phy-handle = <&rgmii_phy1>;
+	phy-connection-type = "rgmii-id";
+	status = "okay";
+};
+
+&dcu0 {
+	display = <&display>;
+	status = "okay";
+
+	display: display@0 {
+		bits-per-pixel = <24>;
+
+		display-timings {
+			native-mode = <&timing0>;
+			timing0: nl4827hc19 {
+				clock-frequency = <10870000>;
+				hactive = <480>;
+				vactive = <272>;
+				hback-porch = <2>;
+				hfront-porch = <2>;
+				vback-porch = <2>;
+				vfront-porch = <2>;
+				hsync-len = <41>;
+				vsync-len = <4>;
+				hsync-active = <1>;
+				vsync-active = <1>;
+			};
+		};
+	};
+};
+
+&i2c0 {
+	status = "okay";
+
+	ina220@40 {
+		compatible = "ti,ina220";
+		reg = <0x40>;
+		shunt-resistor = <1000>;
+	};
+
+	ina220@41 {
+		compatible = "ti,ina220";
+		reg = <0x41>;
+		shunt-resistor = <1000>;
+	};
+
+	adt7461@4c {
+		compatible = "adi,adt7461";
+		reg = <0x4d>;
+	};
+};
+
+&i2c1 {
+	status = "disabled";
+	codec: sgtl5000@a {
+		#sound-dai-cells = <0>;
+		compatible = "fsl,sgtl5000";
+		reg = <0x0a>;
+		VDDA-supply = <&reg_3p3v>;
+		VDDIO-supply = <&reg_3p3v>;
+		clocks = <&sys_mclk 1>;
+	};
+
+	hdmi: sii9022a@39 {
+	      compatible = "fsl,sii902x";
+	      reg = <0x39>;
+	      interrupts = <GIC_SPI 167 IRQ_TYPE_EDGE_RISING>;
+	};
+};
+
+&ifc {
+	#address-cells = <2>;
+	#size-cells = <1>;
+	/* NAND Flash on board */
+	ranges = <0x0 0x0 0x0 0x7e800000 0x00010000>;
+	status = "okay";
+
+	nand@0,0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "fsl,ifc-nand";
+		reg = <0x0 0x0 0x10000>;
+		bank-width = <2>;
+		device-width = <1>;
+
+        partition@0 {
+			/* 2MB for u-boot Image */
+			reg = <0x00000000 0x00200000>;
+			label = "uboot image";
+			read-only;
+		};
+		partition@200000 {
+			reg = <0x00200000 0x00400000>;
+			label = "uboot env";
+		};
+		partition@600000 {
+			reg = <0x00600000 0x00a00000>;
+			label = "kern image";
+		};
+		partition@a00000 {
+			label = "device tree";
+			reg = <0x01000000 0x00100000>;
+		};
+		partition@1100000 {
+			label = "hardware information";
+			reg = <0x01100000 0x00100000>;
+		};
+		partition@1200000 {
+			label = "rootfs";
+			reg = <0x01200000 0x05000000>;
+		};
+		partition@6200000 {
+			label = "applications";
+			reg = <0x06200000 0x10000000>;
+		};
+		partition@16200000 {
+			label = "configs";
+			reg = <0x16200000 0x02000000>;
+		};
+		partition@18200000 {
+			label = "user";
+			reg = <0x18200000 0x14000000>;
+		};
+		partition@2c200000 {
+			label = "logs";
+			reg = <0x2c200000 0x13d00000>;
+		};
+	};
+};
+
+&lpuart0 {
+	status = "okay";
+};
+
+&lpuart2 {
+	status = "okay";
+};
+
+&mdio0 {
+	sgmii_phy0: ethernet-phy@0 {
+		reg = <0x0>;
+	};
+
+	rgmii_phy1: ethernet-phy@1 {
+		reg = <0x1>;
+	};
+
+	sgmii_phy2: ethernet-phy@2 {
+		reg = <0x2>;
+	};
+
+	tbi1: tbi-phy@1f {
+		reg = <0x1f>;
+		device_type = "tbi-phy";
+	};
+};
+
+&sai1 {
+	status = "okay";
+};
+
+&sata {
+	status = "disabled";
+};
+
+&can0 {
+	status = "okay";
+};
+
+&can1 {
+	status = "okay";
+};
+
+&can2 {
+	status = "disabled";
+};
+
+&can3 {
+	status = "disabled";
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "okay";
+};
+
+&uqe {
+	serial: ucc@2000 {
+		device_type = "serial";
+		compatible = "ucc_uart";
+		port-number = <0>;
+		rx-clock-name = "brg1";
+		tx-clock-name = "brg1";
+	};
+
+	ucc_hdlc: ucc@2200 {
+		compatible = "fsl,ucc_hdlc";
+		rx-clock-name = "brg2";
+		tx-clock-name = "brg2";
+		fsl,rx-sync-clock = "none";
+		fsl,tx-sync-clock = "none";
+		fsl,tx-timeslot = <0xfffffffe>;
+		fsl,rx-timeslot = <0xfffffffe>;
+		fsl,tdm-framer-type = "e1";
+		fsl,tdm-mode = "normal";
+		fsl,tdm-id = <1>;
+		fsl,siram-entry-id = <2>;
+		fsl,inter-loopback;
+	};
+};

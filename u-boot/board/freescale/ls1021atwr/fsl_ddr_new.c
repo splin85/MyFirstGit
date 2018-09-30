@@ -1,0 +1,381 @@
+﻿/*
+**     DDR controller 1 initialization code
+**
+**     Copyright : 2016 Freescale Semiconductor, Inc. All Rights Reserved.
+**     SOURCE DISTRIBUTION PERMISSIBLE as directed in End User License Agreement.
+**     
+**     http      : www.nxp.com
+**     mail      : support@nxp.com
+*/
+
+#define DEBUG_2_ADDR    0x01080F04
+#define DEBUG_3_ADDR    0x01080F08
+#define DEBUG_13_ADDR   0x01080F30
+#define DEBUG_22_ADDR   0x01080F54
+#define DEBUG_29_ADDR   0x01080F70
+
+#define DDRmc1_CS0_BNDS_ADDR         0x01080000
+#define DDRmc1_CS1_BNDS_ADDR         0x01080008
+#define DDRmc1_CS0_CONFIG_ADDR       0x01080080
+#define DDRmc1_CS1_CONFIG_ADDR       0x01080084
+#define DDRmc1_CS0_CONFIG_2_ADDR     0x010800C0
+#define DDRmc1_CS1_CONFIG_2_ADDR     0x010800C4
+#define DDRmc1_CS2_BNDS_ADDR         0x01080010
+#define DDRmc1_CS3_BNDS_ADDR         0x01080018
+#define DDRmc1_CS2_CONFIG_ADDR       0x01080088
+#define DDRmc1_CS3_CONFIG_ADDR       0x0108008C
+#define DDRmc1_CS2_CONFIG_2_ADDR     0x010800C8
+#define DDRmc1_CS3_CONFIG_2_ADDR     0x010800CC
+#define DDRmc1_TIMING_CFG_0_ADDR     0x01080104
+#define DDRmc1_TIMING_CFG_1_ADDR     0x01080108
+#define DDRmc1_TIMING_CFG_2_ADDR     0x0108010C
+#define DDRmc1_TIMING_CFG_3_ADDR     0x01080100
+#define DDRmc1_TIMING_CFG_4_ADDR     0x01080160
+#define DDRmc1_TIMING_CFG_5_ADDR     0x01080164
+#define DDRmc1_SDRAM_CFG_ADDR        0x01080110
+#define DDRmc1_SDRAM_CFG_2_ADDR      0x01080114
+#define DDRmc1_SDRAM_INTERVAL_ADDR   0x01080124
+#define DDRmc1_SDRAM_CLK_CNTL_ADDR   0x01080130
+#define DDRmc1_ZQ_CNTL_ADDR          0x01080170
+#define DDRmc1_WRLVL_CNTL_ADDR       0x01080174
+#define DDRmc1_WRLVL_CNTL_2_ADDR     0x01080190
+#define DDRmc1_WRLVL_CNTL_3_ADDR     0x01080194
+#define DDRmc1_SDRAM_MODE_ADDR       0x01080118
+#define DDRmc1_SDRAM_MODE_2_ADDR     0x0108011C
+#define DDRmc1_TIMING_CFG_6_ADDR        0x01080168
+#define DDRmc1_DESKEW_CNTL_ADDR         0x010802A0
+#define DDRmc1_SDRAM_CFG_3_ADDR         0x01080260
+#define DDRmc1_TIMING_CFG_7_ADDR        0x0108016C
+#define DDRmc1_TIMING_CFG_8_ADDR        0x01080250
+#define DDRmc1_DQ_MAP0_ADDR                     0x01080400
+#define DDRmc1_DQ_MAP1_ADDR                     0x01080404
+#define DDRmc1_DQ_MAP2_ADDR                     0x01080408
+#define DDRmc1_DQ_MAP3_ADDR                     0x0108040C
+#define DDRmc1_SDRAM_MODE_3_ADDR     0x01080200
+#define DDRmc1_SDRAM_MODE_4_ADDR     0x01080204
+#define DDRmc1_SDRAM_MODE_5_ADDR     0x01080208
+#define DDRmc1_SDRAM_MODE_6_ADDR     0x0108020C
+#define DDRmc1_SDRAM_MODE_7_ADDR     0x01080210
+#define DDRmc1_SDRAM_MODE_8_ADDR     0x01080214
+#define DDRmc1_SDRAM_MODE_9_ADDR     0x01080220
+#define DDRmc1_SDRAM_MODE_10_ADDR     0x01080224
+#define DDRmc1_SDRAM_MODE_11_ADDR     0x01080228
+#define DDRmc1_SDRAM_MODE_12_ADDR     0x0108022C
+#define DDRmc1_SDRAM_MODE_13_ADDR     0x01080230
+#define DDRmc1_SDRAM_MODE_14_ADDR     0x01080234
+#define DDRmc1_SDRAM_MODE_15_ADDR     0x01080238
+#define DDRmc1_SDRAM_MODE_16_ADDR     0x0108023C
+#define DDRmc1_INIT_ADDR_ADDR        0x01080148
+#define DDRmc1_INIT_EXT_ADDR_ADDR    0x0108014C
+#define DDRmc1_SDRAM_RCW_1_ADDR      0x01080180
+#define DDRmc1_SDRAM_RCW_2_ADDR      0x01080184
+#define DDRmc1_SDRAM_RCW_3_ADDR      0x010801A0
+#define DDRmc1_SDRAM_RCW_4_ADDR      0x010801A4
+#define DDRmc1_SDRAM_RCW_5_ADDR      0x010801A8
+#define DDRmc1_SDRAM_RCW_6_ADDR      0x010801AC
+#define DDRmc1_ERR_DISABLE_ADDR          0x01080E44
+#define DDRmc1_ERR_INT_EN_ADDR           0x01080E48
+#define DDRmc1_ERR_SBE_ADDR                      0x01080E58
+#define DDRmc1_DATA_INIT_ADDR        0x01080128
+#define DDRmc1_SDRAM_MD_CNTL_ADDR    0x01080120
+#define DDRmc1_DDRCDR_1_ADDR         0x01080B28
+#define DDRmc1_DDRCDR_2_ADDR         0x01080B2C
+
+#define SDRAM_CFG_MEM_EN_MASK       0x80000000
+#define SDRAM_CFG2_D_INIT_MASK      0x00000010
+#define TIMING_CFG2_CPO_MASK            0xF07FFFFF
+#define CS0_BNDS_DEBUG3_MASK            0x00000400
+#define CS0_BNDS_DEBUG13_MASK           0x00000015
+#define CS0_BNDS_DEBUG22_MASK           0x24000000
+#define ZQ_CNTL_ZQ_EN_DISABLE_MASK      0x7FFFFFFF
+#define SDRAM_INTERVAL_REFINT_MASK  0x0000FFFF
+#define SDRAM_MD_CNTL_MASK                      0x84080000
+#define SDRAM_MD_CNTL_MD_EN_MASK        0x80000000
+#define SDRAM_MD_CNTL_CKE_CNTL_MASK     0x00200000
+#define WRLVL_CNTL_WRLVL_EN_DISABLE_MASK        0x7FFFFFFF
+#define SDRAM_CFG2_RCW_D_INT_DISABLE_MASK       0xFFFFFFEB
+
+
+// DDR Controller configured register values
+#define DDRmc1_CS0_BNDS_VAL         0x008000FF
+#define DDRmc1_CS1_BNDS_VAL         0x088008BF
+#define DDRmc1_CS0_CONFIG_VAL       0x80010412
+#define DDRmc1_CS1_CONFIG_VAL       0x0202
+#define DDRmc1_CS0_CONFIG_2_VAL     0x00
+#define DDRmc1_CS1_CONFIG_2_VAL     0x00
+#define DDRmc1_CS2_BNDS_VAL         0x08C008FF
+#define DDRmc1_CS3_BNDS_VAL         0x0900093F
+#define DDRmc1_CS2_CONFIG_VAL       0x0202
+#define DDRmc1_CS3_CONFIG_VAL       0x00010202
+#define DDRmc1_CS2_CONFIG_2_VAL     0x00
+#define DDRmc1_CS3_CONFIG_2_VAL     0x00
+#define DDRmc1_TIMING_CFG_0_VAL     0x8055000C
+#define DDRmc1_TIMING_CFG_1_VAL     0xBEB60C42
+#define DDRmc1_TIMING_CFG_2_VAL     0x0048D11C
+#define DDRmc1_TIMING_CFG_3_VAL     0x01111000
+#define DDRmc1_TIMING_CFG_4_VAL     0x01
+#define DDRmc1_TIMING_CFG_5_VAL     0x04401400
+#define DDRmc1_SDRAM_CFG_VAL        0x452C0000
+#define DDRmc1_SDRAM_CFG_2_VAL      0x00401000
+#define DDRmc1_SDRAM_INTERVAL_VAL   0x18600618
+#define DDRmc1_SDRAM_CLK_CNTL_VAL   0x02800000
+#define DDRmc1_ZQ_CNTL_VAL          0x8A090705
+#if defined(GSWA_CONFIG)
+#define DDRmc1_WRLVL_CNTL_VAL       0x8675F608
+#define DDRmc1_WRLVL_CNTL_2_VAL     0x0808080B
+#endif
+#if defined(ABSM_CONFIG)
+#define DDRmc1_WRLVL_CNTL_VAL       0x8675F606
+#define DDRmc1_WRLVL_CNTL_2_VAL     0x0607070B
+#endif
+#define DDRmc1_WRLVL_CNTL_3_VAL     0x0B0C0C00
+#define DDRmc1_SDRAM_MODE_VAL       0x01010214
+#define DDRmc1_SDRAM_MODE_2_VAL     0x00
+#define DDRmc1_SDRAM_CFG_3_VAL          0x00
+#define DDRmc1_TIMING_CFG_6_VAL         0x00
+#define DDRmc1_TIMING_CFG_7_VAL         0x00
+#define DDRmc1_TIMING_CFG_8_VAL         0x02115600
+#define DDRmc1_DESKEW_CNTL_VAL          0x00
+#if defined(GSWA_CONFIG)
+#define DDRmc1_DQ_MAP0_VAL              0x5B657554
+#define DDRmc1_DQ_MAP1_VAL              0xD95A0000
+#define DDRmc1_DQ_MAP2_VAL              0x00
+#define DDRmc1_DQ_MAP3_VAL              0x00
+#endif
+#if defined(ABSM_CONFIG)
+#define DDRmc1_DQ_MAP0_VAL              0x00
+#define DDRmc1_DQ_MAP1_VAL              0x00
+#define DDRmc1_DQ_MAP2_VAL              0x00
+#define DDRmc1_DQ_MAP3_VAL              0x00
+#endif
+#define DDRmc1_SDRAM_MODE_3_VAL     0x00
+#define DDRmc1_SDRAM_MODE_4_VAL     0x00
+#define DDRmc1_SDRAM_MODE_5_VAL     0x00
+#define DDRmc1_SDRAM_MODE_6_VAL     0x00
+#define DDRmc1_SDRAM_MODE_7_VAL     0x00
+#define DDRmc1_SDRAM_MODE_8_VAL     0x00
+#define DDRmc1_SDRAM_MODE_9_VAL     0x0500
+#define DDRmc1_SDRAM_MODE_10_VAL     0x04000000
+#define DDRmc1_SDRAM_MODE_11_VAL     0x00
+#define DDRmc1_SDRAM_MODE_12_VAL     0x00
+#define DDRmc1_SDRAM_MODE_13_VAL     0x00
+#define DDRmc1_SDRAM_MODE_14_VAL     0x00
+#define DDRmc1_SDRAM_MODE_15_VAL     0x00
+#define DDRmc1_SDRAM_MODE_16_VAL     0x00
+#define DDRmc1_DDRCDR_1_VAL         0x80040000
+#define DDRmc1_DDRCDR_2_VAL         0xA101
+#define DDRmc1_INIT_ADDR_VAL        0x00000000
+#define DDRmc1_INIT_EXT_ADDR_VAL    0x00000000
+#define DDRmc1_SDRAM_RCW_1_VAL      0x00
+#define DDRmc1_SDRAM_RCW_2_VAL      0x00
+#define DDRmc1_SDRAM_RCW_3_VAL      0x00
+#define DDRmc1_SDRAM_RCW_4_VAL      0x00
+#define DDRmc1_SDRAM_RCW_5_VAL      0x00
+#define DDRmc1_SDRAM_RCW_6_VAL      0x00
+#define DDRmc1_ERR_DISABLE_VAL      0x00
+#define DDRmc1_ERR_INT_EN_VAL           0x00
+#define DDRmc1_ERR_SBE_VAL              0x00010000
+#define DDRmc1_DATA_INIT_VAL        0xDEADBEEF
+#define DDRmc1_SDRAM_MD_CNTL_VAL    0x00000000
+
+typedef unsigned int uint32_t;
+
+#define CAST32(a) (uint32_t*)(a)
+#define SWAP(x)  ( \
+    (((x) >> 24) & 0xFF) \
+  | (((x) << 8) & 0xFF0000) \
+  | (((x) >> 8) & 0xFF00) \
+  | (((x) << 24) & 0xFF000000) \
+) \
+
+#define VALUE_OF(x) \
+        SWAP(x) 
+
+#define GET32(a) VALUE_OF(*(CAST32(a)))
+#define WRITE32(a,v) *(CAST32(a)) = VALUE_OF(v);
+
+void fsl_ddrmc_init(void)
+{
+       // Chip select 0 registers initialization
+       // CS0_BNDS
+       WRITE32(DDRmc1_CS0_BNDS_ADDR, DDRmc1_CS0_BNDS_VAL);
+       // CS0_CONFIG
+       WRITE32(DDRmc1_CS0_CONFIG_ADDR, DDRmc1_CS0_CONFIG_VAL);
+       // CS0_CONFIG_2
+       WRITE32(DDRmc1_CS0_CONFIG_2_ADDR, DDRmc1_CS0_CONFIG_2_VAL);
+
+       // Chip select 1 registers initialization
+       // CS1_BNDS
+       WRITE32(DDRmc1_CS1_BNDS_ADDR, DDRmc1_CS1_BNDS_VAL);
+       // CS1_CONFIG
+       WRITE32(DDRmc1_CS1_CONFIG_ADDR, DDRmc1_CS1_CONFIG_VAL);
+       // CS1_CONFIG_2
+       WRITE32(DDRmc1_CS1_CONFIG_2_ADDR, DDRmc1_CS1_CONFIG_2_VAL);
+
+       // Chip select 2 registers initialization
+       // CS2_BNDS
+       WRITE32(DDRmc1_CS2_BNDS_ADDR, DDRmc1_CS2_BNDS_VAL);
+       // CS2_CONFIG
+       WRITE32(DDRmc1_CS2_CONFIG_ADDR, DDRmc1_CS2_CONFIG_VAL);
+       // CS2_CONFIG_2
+       WRITE32(DDRmc1_CS2_CONFIG_2_ADDR, DDRmc1_CS2_CONFIG_2_VAL);
+
+       // Chip select 3 registers initialization
+       // CS3_BNDS
+       WRITE32(DDRmc1_CS3_BNDS_ADDR, DDRmc1_CS3_BNDS_VAL);
+       // CS3_CONFIG
+       WRITE32(DDRmc1_CS3_CONFIG_ADDR, DDRmc1_CS3_CONFIG_VAL);
+       // CS3_CONFIG_2
+       WRITE32(DDRmc1_CS3_CONFIG_2_ADDR, DDRmc1_CS3_CONFIG_2_VAL);
+
+       // DDR_SDRAM_CFG_2
+       WRITE32(DDRmc1_SDRAM_CFG_2_ADDR, DDRmc1_SDRAM_CFG_2_VAL);
+
+       // DDR_SDRAM_MODE
+       WRITE32(DDRmc1_SDRAM_MODE_ADDR, DDRmc1_SDRAM_MODE_VAL);
+
+       // DDR_SDRAM_MODE_2
+       WRITE32(DDRmc1_SDRAM_MODE_2_ADDR, DDRmc1_SDRAM_MODE_2_VAL);
+
+       // DDR_SDRAM_MODE_3
+       WRITE32(DDRmc1_SDRAM_MODE_3_ADDR, DDRmc1_SDRAM_MODE_3_VAL);
+
+       // DDR_SDRAM_MODE_4
+       WRITE32(DDRmc1_SDRAM_MODE_4_ADDR, DDRmc1_SDRAM_MODE_4_VAL);
+
+       // DDR_SDRAM_MODE_5
+       WRITE32(DDRmc1_SDRAM_MODE_5_ADDR, DDRmc1_SDRAM_MODE_5_VAL);
+
+       // DDR_SDRAM_MODE_6
+       WRITE32(DDRmc1_SDRAM_MODE_6_ADDR, DDRmc1_SDRAM_MODE_6_VAL);
+
+       // DDR_SDRAM_MODE_7
+       WRITE32(DDRmc1_SDRAM_MODE_7_ADDR, DDRmc1_SDRAM_MODE_7_VAL);
+
+       // DDR_SDRAM_MODE_8
+       WRITE32(DDRmc1_SDRAM_MODE_8_ADDR, DDRmc1_SDRAM_MODE_8_VAL);
+
+       // DDR_SDRAM_CNTL
+       WRITE32(DDRmc1_SDRAM_MD_CNTL_ADDR, DDRmc1_SDRAM_MD_CNTL_VAL);
+
+       // DDR_SDRAM_INTERVAL
+       WRITE32(DDRmc1_SDRAM_INTERVAL_ADDR, DDRmc1_SDRAM_INTERVAL_VAL);
+
+       // DDR_SDRAM_DATA_INIT
+       WRITE32(DDRmc1_DATA_INIT_ADDR, DDRmc1_DATA_INIT_VAL);
+
+       // DDR_SDRAM_CLK_CNTL
+       WRITE32(DDRmc1_SDRAM_CLK_CNTL_ADDR, DDRmc1_SDRAM_CLK_CNTL_VAL);
+
+       // DDR_DATA_INIT
+       WRITE32(DDRmc1_INIT_ADDR_ADDR, DDRmc1_INIT_ADDR_VAL);
+
+       // DDR_INIT_EXT_ADDR
+       WRITE32(DDRmc1_INIT_EXT_ADDR_ADDR, DDRmc1_INIT_EXT_ADDR_VAL);
+
+       // TIMING_CFG_0
+       WRITE32(DDRmc1_TIMING_CFG_0_ADDR, DDRmc1_TIMING_CFG_0_VAL);
+
+       // TIMING_CFG_1
+       WRITE32(DDRmc1_TIMING_CFG_1_ADDR, DDRmc1_TIMING_CFG_1_VAL);
+
+       // TIMING_CFG_2
+       WRITE32(DDRmc1_TIMING_CFG_2_ADDR, DDRmc1_TIMING_CFG_2_VAL);
+       
+       // TIMING_CFG_3
+       WRITE32(DDRmc1_TIMING_CFG_3_ADDR, DDRmc1_TIMING_CFG_3_VAL);
+       
+       // TIMING_CFG_4
+       WRITE32(DDRmc1_TIMING_CFG_4_ADDR, DDRmc1_TIMING_CFG_4_VAL);
+
+       // TIMING_CFG_5
+       WRITE32(DDRmc1_TIMING_CFG_5_ADDR, DDRmc1_TIMING_CFG_5_VAL);
+
+       // DDR_ZQ_CNTL
+       WRITE32(DDRmc1_ZQ_CNTL_ADDR, DDRmc1_ZQ_CNTL_VAL);
+
+       // DDR_WRLVL_CNTL
+       WRITE32(DDRmc1_WRLVL_CNTL_ADDR, DDRmc1_WRLVL_CNTL_VAL);
+
+       // DDR_WRLVL_CNTL_2
+       WRITE32(DDRmc1_WRLVL_CNTL_2_ADDR, DDRmc1_WRLVL_CNTL_2_VAL);
+
+       // DDR_WRLVL_CNTL_3
+       WRITE32(DDRmc1_WRLVL_CNTL_3_ADDR, DDRmc1_WRLVL_CNTL_3_VAL);
+
+       // DDR_DDRCDR_1
+       WRITE32(DDRmc1_DDRCDR_1_ADDR, DDRmc1_DDRCDR_1_VAL);
+
+       // DDR_DDRCDR_2
+       WRITE32(DDRmc1_DDRCDR_2_ADDR, DDRmc1_DDRCDR_2_VAL);
+
+       // DDR_SDRAM_RCW_1
+       WRITE32(DDRmc1_SDRAM_RCW_1_ADDR, DDRmc1_SDRAM_RCW_1_VAL);
+
+       // DDR_SDRAM_RCW_2
+       WRITE32(DDRmc1_SDRAM_RCW_2_ADDR, DDRmc1_SDRAM_RCW_2_VAL);
+
+       // DDR_ERR_DISABLE
+       WRITE32(DDRmc1_ERR_DISABLE_ADDR, DDRmc1_ERR_DISABLE_VAL);
+
+       // DDR_ERR_INT_EN
+       WRITE32(DDRmc1_ERR_INT_EN_ADDR, DDRmc1_ERR_INT_EN_VAL);
+
+       // DDR_ERR_SBE
+       WRITE32(DDRmc1_ERR_SBE_ADDR, DDRmc1_ERR_SBE_VAL);
+       // DDR_SDRAM_CFG_3
+       WRITE32(DDRmc1_SDRAM_CFG_3_ADDR, DDRmc1_SDRAM_CFG_3_VAL);
+
+       // TIMING_CFG_6
+       WRITE32(DDRmc1_TIMING_CFG_6_ADDR, DDRmc1_TIMING_CFG_6_VAL);
+
+       // TIMING_CFG_7
+       WRITE32(DDRmc1_TIMING_CFG_7_ADDR, DDRmc1_TIMING_CFG_7_VAL);
+
+       // TIMING_CFG_8
+       WRITE32(DDRmc1_TIMING_CFG_8_ADDR, DDRmc1_TIMING_CFG_8_VAL);
+
+       // DESKEW_CNTL
+       WRITE32(DDRmc1_DESKEW_CNTL_ADDR, DDRmc1_DESKEW_CNTL_VAL);
+
+       // DQ_MAP0
+       WRITE32(DDRmc1_DQ_MAP0_ADDR, DDRmc1_DQ_MAP0_VAL);
+
+       // DQ_MAP1
+       WRITE32(DDRmc1_DQ_MAP1_ADDR, DDRmc1_DQ_MAP1_VAL);
+
+       // DQ_MAP2
+       WRITE32(DDRmc1_DQ_MAP2_ADDR, DDRmc1_DQ_MAP2_VAL);
+
+       // DQ_MAP3
+       WRITE32(DDRmc1_DQ_MAP3_ADDR, DDRmc1_DQ_MAP3_VAL);
+
+       // SDRAM_MODE_9, ..., SDRAM_MODE_16
+       WRITE32(DDRmc1_SDRAM_MODE_9_ADDR, DDRmc1_SDRAM_MODE_9_VAL);
+       WRITE32(DDRmc1_SDRAM_MODE_10_ADDR, DDRmc1_SDRAM_MODE_10_VAL);
+       WRITE32(DDRmc1_SDRAM_MODE_11_ADDR, DDRmc1_SDRAM_MODE_11_VAL);
+       WRITE32(DDRmc1_SDRAM_MODE_12_ADDR, DDRmc1_SDRAM_MODE_12_VAL);
+       WRITE32(DDRmc1_SDRAM_MODE_13_ADDR, DDRmc1_SDRAM_MODE_13_VAL);
+       WRITE32(DDRmc1_SDRAM_MODE_14_ADDR, DDRmc1_SDRAM_MODE_14_VAL);
+       WRITE32(DDRmc1_SDRAM_MODE_15_ADDR, DDRmc1_SDRAM_MODE_15_VAL);
+       WRITE32(DDRmc1_SDRAM_MODE_16_ADDR, DDRmc1_SDRAM_MODE_16_VAL);
+
+       // DDR_SDRAM_RCW_3, ..., DDR_SDRAM_RCW_6
+       WRITE32(DDRmc1_SDRAM_RCW_3_ADDR, DDRmc1_SDRAM_RCW_3_VAL);
+       WRITE32(DDRmc1_SDRAM_RCW_4_ADDR, DDRmc1_SDRAM_RCW_4_VAL);
+       WRITE32(DDRmc1_SDRAM_RCW_5_ADDR, DDRmc1_SDRAM_RCW_5_VAL);
+       WRITE32(DDRmc1_SDRAM_RCW_6_ADDR, DDRmc1_SDRAM_RCW_6_VAL);
+
+       // DDR_SDRAM_CFG
+       // Set, but do not enable the memory
+       WRITE32(DDRmc1_SDRAM_CFG_ADDR, (DDRmc1_SDRAM_CFG_VAL & (~(SDRAM_CFG_MEM_EN_MASK))));
+
+       // Wait at least 500 useconds
+       udelay(500);
+
+       // Enable the memory after all configuration is entered in registers
+       WRITE32(DDRmc1_SDRAM_CFG_ADDR, (DDRmc1_SDRAM_CFG_VAL | SDRAM_CFG_MEM_EN_MASK));
+
+       // Wait for the memory controller initialization to finish
+       while (GET32(DDRmc1_SDRAM_CFG_2_ADDR) & SDRAM_CFG2_D_INIT_MASK){udelay(500);}
+}
