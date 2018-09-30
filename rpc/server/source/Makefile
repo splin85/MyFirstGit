@@ -1,7 +1,3 @@
-# Copyright (C) 2017 Bei Jing Fu Hua Yu Qi Info Tech, Inc
-#
-# @author zhang jian ming
-# @date 03/01/18
 
 
 LIB = librpcserver.a
